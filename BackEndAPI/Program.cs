@@ -104,7 +104,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowFrontEnd");
+app.UseCors("FrontendPolicy");
 
 // Migra o database durante startup.
 using (var scope = app.Services.CreateScope())
