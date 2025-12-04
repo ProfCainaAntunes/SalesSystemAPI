@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using BackEndAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<BackEndAPIContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("BackEndAPIContext") ?? throw new InvalidOperationException("Connection string 'BackEndAPIContext' not found.")));
 
 // Add services to the container.
 
