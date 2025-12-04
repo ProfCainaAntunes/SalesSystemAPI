@@ -81,11 +81,6 @@ namespace BackEndAPI.Controllers
                 return BadRequest("SellerId does not exist.");
             }
 
-            if (id != client.Id)
-            {
-                return BadRequest();
-            }
-
             _context.Entry(client).State = EntityState.Modified;
 
             try

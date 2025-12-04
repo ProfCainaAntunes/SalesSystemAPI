@@ -47,10 +47,6 @@ namespace BackEndAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
 
             if(product.Price < 0)
             {

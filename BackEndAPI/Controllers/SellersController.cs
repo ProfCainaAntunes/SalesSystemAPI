@@ -47,11 +47,6 @@ namespace BackEndAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSeller(int id, Seller seller)
         {
-            if (id != seller.Id)
-            {
-                return BadRequest();
-            }
-
             _context.Entry(seller).State = EntityState.Modified;
 
             try
