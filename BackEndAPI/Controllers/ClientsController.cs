@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEndAPI.Data;
 using BackEndAPI.Models;
-using BackEndAPI.DTOs; 
 
 namespace BackEndAPI.Controllers
 {
@@ -43,11 +42,45 @@ namespace BackEndAPI.Controllers
             return client;
         }
 
+        // GET: api/Clients/bySellerId/2
+        [HttpGet("bySellerId/{sellerId}")]
+        public async Task<ActionResult<IEnumerable<Client>>> GetClientbySellerId(int sellerId)
+        {
+            List<Client> clients = await _context.Client
+                                    .Where(o => o.SellerId == sellerId)
+                                    .ToListAsync();
+
+            if (clients.Count == 0)
+                return NotFound();
+
+            return clients;
+        }
+
+        // GET: api/Clients/byName/5
+        [HttpGet("byName/{name}")]
+        public async Task<ActionResult<IEnumerable<Client>>> GetClientbyName(string name)
+        {
+            List<Client> clients = await _context.Client
+                        .Where(o =>o.Name.ToLower().Contains(name.ToLower()))
+                        .ToListAsync();
+
+            if (clients.Count == 0)
+                return NotFound();
+
+            return clients;
+        }
+
         // PUT: api/Clients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClient(int id, Client client)
         {
+            Seller? seller = await _context.Seller.FindAsync(client.SellerId);
+
+            if(seller == null)
+            {
+                return BadRequest("SellerId does not exist.");
+            }
+
             if (id != client.Id)
             {
                 return BadRequest();
@@ -77,16 +110,15 @@ namespace BackEndAPI.Controllers
         // POST: api/Clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(ClientDTO clientDTO)
-        {
-            Client client = new Client
+        public async Task<ActionResult<Client>> PostClient(Client client)
+        {   
+            Seller? seller = await _context.Seller.FindAsync(client.SellerId);
+
+            if(seller == null)
             {
-                Name = clientDTO.Name,
-                Email = clientDTO.Email,
-                Address = clientDTO.Address,
-                Phone = clientDTO.Phone
-            };
-            
+                return BadRequest("SellerId does not exist.");
+            }
+
             _context.Client.Add(client);
             await _context.SaveChangesAsync();
 

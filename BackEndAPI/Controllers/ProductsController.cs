@@ -52,6 +52,16 @@ namespace BackEndAPI.Controllers
                 return BadRequest();
             }
 
+            if(product.Price < 0)
+            {
+                return BadRequest("Price cannot be negative.");
+            }
+
+            if(product.StockQuantity < 0)
+            {
+                return BadRequest("Stock quantity cannot be negative.");
+            }
+
             _context.Entry(product).State = EntityState.Modified;
 
             try
@@ -78,6 +88,16 @@ namespace BackEndAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
+            if(product.Price < 0)
+            {
+                return BadRequest("Price cannot be negative.");
+            }
+
+            if(product.StockQuantity < 0)
+            {
+                return BadRequest("Stock quantity cannot be negative.");
+            }
+
             _context.Product.Add(product);
             await _context.SaveChangesAsync();
 
