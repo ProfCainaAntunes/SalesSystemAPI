@@ -82,7 +82,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     // Define uma política chamada "FrontendPolicy" (você pode escolher o nome)
-    options.AddPolicy(name: "FrontendPolicy",
+    /*options.AddPolicy(name: "FrontendPolicy",
                       builder =>
                       {
                           // 1. Permite as origens específicas do seu frontend
@@ -94,7 +94,7 @@ builder.Services.AddCors(options =>
                                  
                                  // 3. Permite todos os cabeçalhos
                                  .AllowAnyHeader();
-                      });
+                      });*/
 
     options.AddDefaultPolicy(
         builder =>
