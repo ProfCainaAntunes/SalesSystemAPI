@@ -88,6 +88,7 @@ namespace BackEndAPI.Controllers
                 return BadRequest("Client does not exists.");
             }
 
+            clientDb.SellerId = client.SellerId;
             clientDb.Name = client.Name;
             clientDb.Email = client.Email;
             clientDb.Address = client.Address;
