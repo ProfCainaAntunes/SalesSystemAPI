@@ -58,7 +58,18 @@ namespace BackEndAPI.Controllers
                 return BadRequest("Stock quantity cannot be negative.");
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            var productDb = await _context.Product.FindAsync(id);
+
+            if(productDb == null)
+            {
+                return BadRequest("Product does not exists.");
+            }
+
+            productDb.Name = product.Name;
+            productDb.Description = product.Description;
+            productDb.Category = product.Category;
+            productDb.Price = product.Price;
+            productDb.StockQuantity = product.StockQuantity;
 
             try
             {
@@ -66,14 +77,7 @@ namespace BackEndAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict("Concurrency conflict occurred while updating the product.");
             }
 
             return NoContent();

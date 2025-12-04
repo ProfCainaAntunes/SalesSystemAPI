@@ -47,7 +47,16 @@ namespace BackEndAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSeller(int id, Seller seller)
         {
-            _context.Entry(seller).State = EntityState.Modified;
+            var sellerDb = await _context.Seller.FindAsync(id);
+
+            if(sellerDb == null)
+            {
+                return BadRequest("Seller does not exists.");
+            }
+
+            sellerDb.Name = seller.Name;
+            sellerDb.Email = seller.Email;
+            sellerDb.Phone = seller.Phone;
 
             try
             {
@@ -55,14 +64,8 @@ namespace BackEndAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SellerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict("Concurrency conflict occurred while updating the seller.");
+          
             }
 
             return NoContent();

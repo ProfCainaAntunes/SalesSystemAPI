@@ -81,7 +81,17 @@ namespace BackEndAPI.Controllers
                 return BadRequest("SellerId does not exist.");
             }
 
-            _context.Entry(client).State = EntityState.Modified;
+            var clientDb = await _context.Client.FindAsync(id);
+
+            if(clientDb == null)
+            {
+                return BadRequest("Client does not exists.");
+            }
+
+            clientDb.Name = client.Name;
+            clientDb.Email = client.Email;
+            clientDb.Address = client.Address;
+            clientDb.Phone = client.Phone;
 
             try
             {
@@ -89,14 +99,7 @@ namespace BackEndAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict("Concurrency conflict occurred while updating the client.");
             }
 
             return NoContent();
