@@ -12,25 +12,61 @@ var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
 if (!string.IsNullOrEmpty(databaseUrl))
 {
-    // databaseUrl: postgres://user:pass@host:port/dbname
+    // Algumas vezes o Render retorna "postgresql://" — uniformizamos para "postgres://"
+    databaseUrl = databaseUrl.Replace("postgresql://", "postgres://");
+
     var uri = new Uri(databaseUrl);
-    var userInfo = uri.UserInfo.Split(':');
+
+    // Se a URL não contém porta (uri.Port == -1), usar 5432 por padrão
+    var port = uri.Port == -1 ? 5432 : uri.Port;
+
+    var userInfo = uri.UserInfo.Split(':', 2); // evita erro se senha contiver ':'
+    var username = userInfo.Length > 0 ? userInfo[0] : "";
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
 
     var builderConn = new NpgsqlConnectionStringBuilder
     {
         Host = uri.Host,
-        Port = uri.Port,
-        Username = userInfo[0],
-        Password = userInfo[1],
+        Port = port,
+        Username = username,
+        Password = password,
         Database = uri.AbsolutePath.TrimStart('/'),
         SslMode = SslMode.Require
     };
+
     npgsqlConn = builderConn.ToString();
 }
 else
 {
-    npgsqlConn = builder.Configuration.GetConnectionString("BackEndAPIContext")
-                ?? throw new InvalidOperationException("Connection string 'BackEndAPIContext' not found.");
+    // fallback para variáveis separadas (opcional)
+    var host = Environment.GetEnvironmentVariable("DB_HOST");
+    var portStr = Environment.GetEnvironmentVariable("DB_PORT");
+    int port = 5432;
+    if (!string.IsNullOrEmpty(portStr) && int.TryParse(portStr, out var p)) port = p;
+
+    var user = Environment.GetEnvironmentVariable("DB_USER");
+    var pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+    var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+    if (!string.IsNullOrEmpty(host) && !string.IsNullOrEmpty(dbName))
+    {
+        var builderConn = new NpgsqlConnectionStringBuilder
+        {
+            Host = host,
+            Port = port,
+            Username = user,
+            Password = pass,
+            Database = dbName,
+            SslMode = SslMode.Require
+        };
+        npgsqlConn = builderConn.ToString();
+    }
+    else
+    {
+        // último recurso: pegar de appsettings
+        npgsqlConn = builder.Configuration.GetConnectionString("BackEndAPIContext")
+            ?? throw new InvalidOperationException("Connection string not found.");
+    }
 }
 
 builder.Services.AddDbContext<BackEndAPIContext>(options =>
