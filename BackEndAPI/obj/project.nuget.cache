@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "4pH4ud/uH6g=",
+  "success": true,
+  "projectFilePath": "D:\\SENAI\\OneDrive - SESISENAISP - Escolas\\Faculdade\\CST ADS\\Semestre 2\\Desenvolvimento Back-end\\Projetos\\SalesSystemAPI\\BackEndAPI\\BackEndAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\caina\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.11\\microsoft.aspnetcore.openapi.9.0.11.nupkg.sha512",
+    "C:\\Users\\caina\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
