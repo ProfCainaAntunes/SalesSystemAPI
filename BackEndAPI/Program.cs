@@ -82,30 +82,29 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     // Define uma política chamada "FrontendPolicy" (você pode escolher o nome)
-    /*options.AddPolicy(name: "FrontendPolicy",
+    options.AddPolicy(name: "FrontendPolicy",
                       builder =>
                       {
                           // 1. Permite as origens específicas do seu frontend
-                          builder.WithOrigins("http://localhost:3000",
-                                              "https://sua-url-do-frontend.com") // <== MUITO IMPORTANTE: Mude para a URL do seu frontend!
-                                 
-                                 // 2. Permite os métodos HTTP que você usa (GET, POST, etc.)
-                                 .WithMethods("GET", "POST", "PUT", "DELETE")
-                                 
+                          builder.WithOrigins("http://localhost:3000") 
+                                 // 2. Permite todos os métodos HTTP
+                                 .AllowAnyMethod()  
                                  // 3. Permite todos os cabeçalhos
                                  .AllowAnyHeader();
-                      });*/
+                      });
 
-    options.AddDefaultPolicy(
+    /*options.AddDefaultPolicy(
         builder =>
         {
             builder.AllowAnyOrigin()
                    .AllowAnyMethod()
                    .AllowAnyHeader();
-        });
+        });*/
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontEnd");
 
 // Migra o database durante startup.
 using (var scope = app.Services.CreateScope())
