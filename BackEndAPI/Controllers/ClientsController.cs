@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEndAPI.Data;
 using BackEndAPI.Models;
+using BackEndAPI.DTOs; 
 
 namespace BackEndAPI.Controllers
 {
@@ -76,8 +77,16 @@ namespace BackEndAPI.Controllers
         // POST: api/Clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(Client client)
+        public async Task<ActionResult<Client>> PostClient(ClientDTO clientDTO)
         {
+            Client client = new Client
+            {
+                Name = clientDTO.Name,
+                Email = clientDTO.Email,
+                Address = clientDTO.Address,
+                Phone = clientDTO.Phone
+            };
+            
             _context.Client.Add(client);
             await _context.SaveChangesAsync();
 
