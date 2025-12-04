@@ -92,6 +92,13 @@ namespace BackEndAPI.Controllers
                 return NotFound();
             }
 
+            Client? linkedClient = await _context.Client.FirstOrDefaultAsync(c => c.SellerId == id);
+            
+            if (linkedClient != null)
+            {
+                return BadRequest("Cannot delete seller with linked clients.");
+            }
+
             _context.Seller.Remove(seller);
             await _context.SaveChangesAsync();
 
